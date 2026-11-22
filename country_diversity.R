@@ -182,7 +182,7 @@ summary_table <- complete_2000 %>%
   group_by(year0) %>% 
   summarise(  
     country_count = n(),
-    sample_count = sum(total_number_genotyped_adjusted),
+    sample_count = sum(total_recorded_genotypes_adj),
     
     # Subtypes
     no_subtypes = median(count_subtypes),
@@ -388,9 +388,9 @@ all_summary_table <- all_data %>%
   group_by(year0) %>%
   summarise(
     country_count = n(),
-    sample_count = round(sum(total_number_genotyped_adjusted), 0),
-    median_n_per_country = median(total_number_genotyped_adjusted),
-    iqr_n_per_country = paste0("(", round(quantile(total_number_genotyped_adjusted, 0.25), 0), "-", round(quantile(total_number_genotyped_adjusted, 0.75), 0), ")"),
+    sample_count = round(sum(total_recorded_genotypes_adj), 0),
+    median_n_per_country = median(total_recorded_genotypes_adj),
+    iqr_n_per_country = paste0("(", round(quantile(total_recorded_genotypes_adj, 0.25), 0), "-", round(quantile(total_recorded_genotypes_adj, 0.75), 0), ")"),
     
     # Subtypes
     no_subtypes = median(count_subtypes),
