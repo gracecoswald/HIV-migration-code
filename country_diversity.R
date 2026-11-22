@@ -377,3 +377,57 @@ div_mig_popn_with_tests<- div_mig_popn_with_tests%>% select(c("year0",
 div_mig_popn_with_tests
 
 write.csv(div_mig_popn_with_tests, "complete_1995_diversity.csv")
+
+#  Supplementary: all countries, all time periods (descriptive only) 
+
+all_data <- div_mig_popn %>%
+  ungroup() %>%
+  filter(year0 >= 1990)
+
+all_summary_table <- all_data %>%
+  group_by(year0) %>%
+  summarise(
+    country_count = n(),
+    sample_count = round(sum(total_number_genotyped_adjusted), 0),
+    median_n_per_country = median(total_number_genotyped_adjusted),
+    iqr_n_per_country = paste0("(", round(quantile(total_number_genotyped_adjusted, 0.25), 0), "-", round(quantile(total_number_genotyped_adjusted, 0.75), 0), ")"),
+    
+    # Subtypes
+    no_subtypes = median(count_subtypes),
+    iqr_subtypes = paste0("(", round(quantile(count_subtypes, 0.25), 2), "-", round(quantile(count_subtypes, 0.75), 2), ")"),
+    
+    # cr_fs
+    no_cr_fs = median(count_cr_fs),
+    iqr_cr_fs = paste0("(", round(quantile(count_cr_fs, 0.25), 2), "-", round(quantile(count_cr_fs, 0.75), 2), ")"),
+    
+    # Recombinants
+    prop_recombinants = median(proportion_recombinants),
+    iqr_recombinants = paste0("(", round(quantile(proportion_recombinants, 0.25), 2), "-", round(quantile(proportion_recombinants, 0.75), 2), ")"),
+    
+    # cr_fs proportion
+    prop_cr_fs = median(proportion_cr_fs),
+    iqr_cr_fs_prop = paste0("(", round(quantile(proportion_cr_fs, 0.25), 2), "-", round(quantile(proportion_cr_fs, 0.75), 2), ")"),
+    
+    # ur_fs proportion
+    prop_ur_fs = median(proportion_ur_fs),
+    iqr_ur_fs = paste0("(", round(quantile(proportion_ur_fs, 0.25), 2), "-", round(quantile(proportion_ur_fs, 0.75), 2), ")"),
+    
+    # Shannon
+    median_shannon = median(shannon_indices),
+    iqr_shannon = paste0("(", round(quantile(shannon_indices, 0.25), 2), "-", round(quantile(shannon_indices, 0.75), 2), ")"),
+    mean_shannon = mean(shannon_indices),
+    sd_shannon = paste0("(", round(sd(shannon_indices), 2), ")"),
+    
+    # Simpson
+    median_simpson = median(simpson_indices),
+    iqr_simpson = paste0("(", round(quantile(simpson_indices, 0.25), 2), "-", round(quantile(simpson_indices, 0.75), 2), ")"),
+    mean_simpson = mean(simpson_indices),
+    sd_simpson = paste0("(", round(sd(simpson_indices), 2), ")"),
+    .groups = "drop"
+  ) %>%
+  mutate(period = ifelse(year0 == 2020, "2020-2022", paste0(year0, "-", year0 + 4)), .before = 1) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+all_summary_table
+
+write.csv(all_summary_table, "all_1990_diversity.csv", row.names = FALSE)
